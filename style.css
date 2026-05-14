@@ -839,41 +839,47 @@ img { display: block; max-width: 100%; }
 }
 
 .tier-card {
-  border: 1px solid rgba(0,0,0,0.10);
-  border-radius: var(--radius);
-  padding: 24px 28px;
-  transition: box-shadow 0.2s;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
-.tier-card:hover { box-shadow: var(--shadow); }
+.tier-card:first-child { border-top: 1px solid rgba(0,0,0,0.08); }
 
 .tier-highlight {
-  border-color: var(--red);
-  background: rgba(192,57,43,0.04);
+  /* no special treatment — all tiers are equal visually */
 }
 
 .tier-card h4 {
   font-family: var(--font-serif);
-  font-size: 1.1rem;
-  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 160px;
+  margin: 0;
+  color: var(--charcoal);
 }
 
 .tier-price {
   font-family: var(--font-serif);
-  font-size: 2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   color: var(--red);
-  margin-bottom: 8px;
+  min-width: 90px;
+  flex-shrink: 0;
 }
 
 .tier-price span {
-  font-size: 1rem;
+  font-size: 0.85rem;
   font-weight: 400;
   color: var(--gray);
 }
 
 .tier-card p {
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--gray);
+  margin: 0;
+  line-height: 1.5;
 }
 
 .tier-card a { color: var(--red); text-decoration: underline; }

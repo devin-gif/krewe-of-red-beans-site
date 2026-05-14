@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Annual Financial Reports — Krewe of Red Beans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ---- PAGE CHROME ---- */
+    .reports-page { background: #f0f0f0; min-height: 100vh; padding: 40px 24px 80px; }
+    .reports-header { text-align: center; margin-bottom: 32px; }
+    .reports-header h1 { font-family: var(--font-serif); font-size: 2rem; color: var(--charcoal); margin-bottom: 8px; }
+    .reports-header p { color: var(--gray); font-size: 0.95rem; }
+
+    /* ---- YEAR TABS ---- */
+    .year-tabs { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+    .year-tab {
+      padding: 8px 20px; border-radius: 99px; font-size: 0.9rem; font-weight: 600;
+      background: #fff; border: 2px solid #ddd; color: #555; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .year-tab:hover { border-color: #00C4CC; color: #00909A; }
+    .year-tab.active { background: #00C4CC; border-color: #00C4CC; color: #fff; }
+
+    /* ---- REPORT CARD ---- */
+    .report-card {
+      max-width: 1100px; margin: 0 auto;
+      background: #fff; border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      overflow: hidden;
+      display: none;
+    }
+    .report-card.active { display: flex; flex-direction: column; }
+
+    .report-body { display: flex; min-height: 600px; }
+
+    /* ---- LEFT PANEL ---- */
+    .report-left {
+      width: 260px; flex-shrink: 0;
+      background: #29C5CC;
+      padding: 36px 24px 28px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .report-org { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(0,0,0,0.45); margin-bottom: 6px; text-align: center; }
+    .report-year-label { font-size: 2.8rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px; }
+    .report-title-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.75); margin-bottom: 28px; }
+    .chart-title { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(0,0,0,0.4); margin-bottom: 12px; align-self: flex-start; }
+    .donut-wrap { width: 180px; height: 180px; }
+    .legend { margin-top: 20px; width: 100%; }
+    .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-label { font-size: 0.72rem; color: rgba(0,0,0,0.65); line-height: 1.3; }
+    .legend-pct { font-size: 0.72rem; font-weight: 700; color: rgba(0,0,0,0.55); margin-left: auto; }
+
+    /* ---- RIGHT PANELS ---- */
+    .report-right { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .report-section { padding: 28px 28px 24px; border-right: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8; }
+    .report-section:nth-child(even) { border-right: none; }
+    .report-section:nth-child(3), .report-section:nth-child(4) { border-bottom: none; }
+    .rs-title { font-size: 1.05rem; font-weight: 700; color: #1B3466; margin-bottom: 14px; }
+
+    /* ---- FINANCIAL TABLES ---- */
+    .ftable { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .ftable tr td { padding: 4px 0; color: #333; }
+    .ftable tr td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .ftable tr:hover td { background: #fafafa; }
+    .ftable .sub td { padding-left: 14px; color: #666; font-size: 0.79rem; }
+    .ftable .total-row td { font-weight: 700; color: #111; border-top: 1.5px solid #ccc; padding-top: 7px; margin-top: 4px; }
+    .ftable .spacer td { height: 8px; }
+    .ftable .section-head td { font-weight: 600; color: #444; padding-top: 10px; font-size: 0.8rem; }
+    .net-positive { color: #16a34a !important; }
+    .net-negative { color: #dc2626 !important; }
+    .net-neutral  { color: #888 !important; }
+
+    /* ---- FOOTER BAR ---- */
+    .report-footer {
+      background: #1B3466; color: rgba(255,255,255,0.6);
+      padding: 12px 32px; font-size: 0.72rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .report-footer strong { color: #fff; }
+    .print-btn {
+      background: none; border: 1px solid rgba(255,255,255,0.35); color: rgba(255,255,255,0.8);
+      padding: 5px 16px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .print-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* ---- NOTE BANNER ---- */
+    .data-note { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 10px 16px; font-size: 0.8rem; color: #78350f; margin: 0 0 16px; }
+
+    /* ---- PRINT ---- */
+    @media print {
+      body * { visibility: hidden; }
+      .report-card.active, .report-card.active * { visibility: visible; }
+      .report-card.active { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; border-radius: 0; }
+      nav, .reports-header, .year-tabs, footer { display: none !important; }
+      @page { size: landscape; margin: 0; }
+    }
+
+    @media (max-width: 800px) {
+      .report-body { flex-direction: column; }
+      .report-left { width: 100%; flex-direction: row; flex-wrap: wrap; gap: 16px; padding: 24px; }
+      .report-right { grid-template-columns: 1fr; }
+      .report-section { border-right: none; }
+      .report-section:nth-child(odd) { border-right: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">Krewe of Red Beans</a>
+      <button class="nav-toggle" aria-label="Open menu">&#9776;</button>
+      <ul class="nav-links">
+        <li><a href="index.html#mission">About</a></li>
+        <li><a href="index.html#programs">Programs</a></li>
+        <li><a href="index.html#events">Events</a></li>
+        <li><a href="transparency.html">Transparency</a></li>
+        <li><a href="index.html#membership" class="nav-cta">Join the Krewe</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="reports-page">
+    <div class="reports-header">
+      <p class="section-eyebrow" style="text-align:center;">Financial Transparency</p>
+      <h1>Annual Financial Reports</h1>
+      <p>Sourced directly from our IRS Form 990 filings. Select a year to view the full report.</p>
+    </div>
+
+    <!-- Year Tabs -->
+    <div class="year-tabs" id="yearTabs"></div>
+
+    <!-- Report Cards (rendered by JS) -->
+    <div id="reportContainer"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <h3>Krewe of Red Beans</h3>
+        <p>3300 Royal Street<br/>New Orleans, LA 70117</p>
+        <p><a href="mailto:beans@kreweofredbeans.org">beans@kreweofredbeans.org</a></p>
+      </div>
+      <div class="footer-links">
+        <h4>Transparency</h4>
+        <ul>
+          <li><a href="transparency.html">Full Transparency Page</a></li>
+          <li><a href="financial-reports.html">Annual Financial Reports</a></li>
+          <li><a href="/docs/990s/990-2025.pdf" target="_blank">Download 990s</a></li>
+        </ul>
+      </div>
+      <div class="footer-social">
+        <h4>Stay Connected</h4>
+        <p>Sign up for our email list or join as a member to stay in the loop.</p>
+        <div class="social-links">
+          <a href="index.html#membership">Join the Krewe</a>
+          <a href="mailto:hello@kreweofredbeans.org">Email Us</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Krewe of Red Beans. All rights reserved. Made with love in New Orleans.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+  // ── CHART COLORS ──────────────────────────────────────────────
+  const COLORS = ['#1B3466','#2563EB','#0891B2','#22D3EE','#38BDF8','#7DD3FC','#93C5FD','#6366F1'];
+
+  // ── HELPERS ───────────────────────────────────────────────────
+  const fmt = n => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0});
+  const pct = (n, total) => ((n / total) * 100).toFixed(1) + '%';
+
+  function donutSVG(slices) {
+    const cx = 90, cy = 90, ro = 82, ri = 50;
+    const total = slices.reduce((s, x) => s + x.value, 0);
+    let angle = -Math.PI / 2;
+    let paths = '';
+    slices.forEach((sl, i) => {
+      const sweep = (sl.value / total) * 2 * Math.PI;
+      const ea = angle + sweep;
+      const la = sweep > Math.PI ? 1 : 0;
+      const x1 = cx + ro * Math.cos(angle), y1 = cy + ro * Math.sin(angle);
+      const x2 = cx + ro * Math.cos(ea),    y2 = cy + ro * Math.sin(ea);
+      const x3 = cx + ri * Math.cos(ea),    y3 = cy + ri * Math.sin(ea);
+      const x4 = cx + ri * Math.cos(angle), y4 = cy + ri * Math.sin(angle);
+      paths += `<path d="M${x1},${y1} A${ro},${ro} 0 ${la},1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 ${la},0 ${x4},${y4}Z" fill="${COLORS[i % COLORS.length]}" stroke="#29C5CC" stroke-width="1.5"/>`;
+      angle = ea;
+    });
+    return `<svg viewBox="0 0 180 180" width="180" height="180">${paths}</svg>`;
+  }
+
+  function legend(slices) {
+    const total = slices.reduce((s, x) => s + x.value, 0);
+    return slices.map((sl, i) =>
+      `<div class="legend-item">
+        <div class="legend-dot" style="background:${COLORS[i % COLORS.length]}"></div>
+        <span class="legend-label">${sl.label}</span>
+        <span class="legend-pct">${pct(sl.value, total)}</span>
+      </div>`
+    ).join('');
+  }
+
+  function tableRows(rows) {
+    return rows.map(r => {
+      if (r.type === 'spacer') return `<tr class="spacer"><td colspan="2"></td></tr>`;
+      if (r.type === 'head')   return `<tr class="section-head"><td colspan="2">${r.label}</td></tr>`;
+      const cls = r.total ? 'total-row' : (r.sub ? 'sub' : '');
+      const valClass = r.net ? (r.value > 0 ? 'net-positive' : r.value < 0 ? 'net-negative' : 'net-neutral') : '';
+      const valStr = r.value !== undefined ? (r.value < 0 ? '('+fmt(r.value)+')' : fmt(r.value)) : '';
+      return `<tr class="${cls}"><td>${r.label}</td><td class="${valClass}">${valStr}</td></tr>`;
+    }).join('');
+  }
+
+  // ── YEAR DATA ─────────────────────────────────────────────────
+  const years = [
+
+    // ── 2020 ──────────────────────────────────────────────────
+    {
+      year: 2020,
+      note: 'The 2020 filing was submitted on paper. Detailed line items are not fully available; totals are cross-verified from the prior-year column of the 2021 Form 990.',
+      pdf: '/docs/990s/990-2020.pdf',
+      income: [
+        { label: 'Contributions & Grants', value: 1823089 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 111654 },
+        { label: 'Equipment & Other', value: 24632 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 136286, total: true },
+      ],
+      liabilities: [
+        { label: 'Total Liabilities', value: 13047 },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 123239 },
+        { label: 'Total Liabilities & Equity', value: 136286, total: true },
+      ],
+      expenses: [
+        { label: 'Total Expenditures', value: 1740169, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: 82920, total: true, net: true },
+      ],
+      incomeTotal: 1823089,
+      expensesTotal: 1740169,
+    },
+
+    // ── 2021 ──────────────────────────────────────────────────
+    {
+      year: 2021,
+      pdf: '/docs/990s/990-2021.pdf',
+      income: [
+        { label: 'Membership Dues', value: 90922 },
+        { label: 'Fundraising Events', value: 10612 },
+        { label: 'Grants & Contributions', value: 247716 },
+        { label: 'Feed the Second Line', value: 918054 },
+        { label: 'Hire a Mardi Gras Artist', value: 186993 },
+        { label: 'Bean Coin', value: 150000 },
+        { label: 'Beanlandia', value: 114648 },
+        { label: 'Hurricane Relief', value: 61346 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 247686 },
+        { label: 'Notes Receivable', value: 6700 },
+        { label: 'Inventory', value: 9200 },
+        { label: 'Buildings & Equipment (net)', value: 2547803 },
+        { label: 'Other Assets', value: 1502 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 2812891, total: true },
+      ],
+      liabilities: [
+        { label: 'Related-Party Loans', value: 1439192 },
+        { label: 'Other Liabilities', value: 1032185 },
+        { label: 'Total Liabilities', value: 2471377, total: true },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 341514 },
+        { label: 'Total Liabilities & Equity', value: 2812891, total: true },
+      ],
+      expenses: [
+        { label: 'COVID Program Expenses', value: 1213052 },
+        { label: 'Grants Paid', value: 1850 },
+        { label: 'Professional Services', value: 77790 },
+        { label: 'Fundraising', value: 16336 },
+        { label: 'Depreciation', value: 16889 },
+        { label: 'Insurance', value: 3282 },
+        { label: 'Other', value: 232817 },
+        { type: 'spacer' },
+        { label: 'Total Expenses', value: 1562016, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: 218275, total: true, net: true },
+      ],
+      incomeTotal: 1780291,
+      expensesTotal: 1562016,
+    },
+
+    // ── 2022 ──────────────────────────────────────────────────
+    {
+      year: 2022,
+      pdf: '/docs/990s/990-2022.pdf',
+      income: [
+        { label: 'Membership Dues', value: 59385 },
+        { label: 'Grants & Donations', value: 166549 },
+        { label: 'Beanlandia', value: 435270 },
+        { label: 'Disaster Relief', value: 5935 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 325039 },
+        { label: 'Notes Receivable', value: 29090 },
+        { label: 'Inventory', value: 5210 },
+        { label: 'Buildings & Equipment (net)', value: 2600062 },
+        { label: 'Other Assets', value: 6908 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 2966309, total: true },
+      ],
+      liabilities: [
+        { label: 'Related-Party Loans', value: 1510599 },
+        { label: 'Other Liabilities', value: 1015737 },
+        { label: 'Total Liabilities', value: 2526336, total: true },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 439973 },
+        { label: 'Total Liabilities & Equity', value: 2966309, total: true },
+      ],
+      expenses: [
+        { label: 'Grants Paid', value: 38240 },
+        { label: 'Salaries & Payroll', value: 48286 },
+        { label: 'Professional Services', value: 48960 },
+        { label: 'Depreciation', value: 82578 },
+        { label: 'Insurance', value: 50519 },
+        { label: 'Mortgage / Interest', value: 109192 },
+        { label: 'Programs (Beanlandia, Parade, etc.)', value: 142236 },
+        { label: 'Other', value: 48669 },
+        { type: 'spacer' },
+        { label: 'Total Expenses', value: 568680, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: 98459, total: true, net: true },
+      ],
+      incomeTotal: 667139,
+      expensesTotal: 568680,
+    },
+
+    // ── 2023 ──────────────────────────────────────────────────
+    {
+      year: 2023,
+      pdf: '/docs/990s/990-2023.pdf',
+      income: [
+        { label: 'Membership Dues', value: 291299 },
+        { label: 'Grants & Donations', value: 7908 },
+        { label: 'Beanlandia', value: 364401 },
+        { label: 'Music Concert Series', value: 33100 },
+        { label: 'Fiscal Sponsorships', value: 6256 },
+        { label: 'Cultural Events & Parade', value: 7872 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 123920 },
+        { label: 'Inventory', value: 5210 },
+        { label: 'Buildings & Equipment (net)', value: 3352526 },
+        { label: 'Other Assets', value: 15407 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 3497063, total: true },
+      ],
+      liabilities: [
+        { label: 'Related-Party Loans', value: 1588661 },
+        { label: 'Unsecured Notes Payable', value: 513805 },
+        { label: 'Other Liabilities', value: 957995 },
+        { label: 'Total Liabilities', value: 3060461, total: true },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 436602 },
+        { label: 'Total Liabilities & Equity', value: 3497063, total: true },
+      ],
+      expenses: [
+        { label: 'Grants Paid', value: 4281 },
+        { label: 'Compensation', value: 1620 },
+        { label: 'Fundraising', value: 15000 },
+        { label: 'Depreciation', value: 139173 },
+        { label: 'Programs — Community', value: 238999 },
+        { label: 'Programs — Parade', value: 74764 },
+        { label: 'Programs — Beanlandia', value: 65117 },
+        { label: 'Programs — Museum', value: 45976 },
+        { label: 'Other', value: 129277 },
+        { type: 'spacer' },
+        { label: 'Total Expenses', value: 714207, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: -3371, total: true, net: true },
+      ],
+      incomeTotal: 710836,
+      expensesTotal: 714207,
+    },
+
+    // ── 2024 ──────────────────────────────────────────────────
+    {
+      year: 2024,
+      pdf: '/docs/990s/990-2024.pdf',
+      income: [
+        { label: 'Membership Dues', value: 246718 },
+        { label: 'Government Grants', value: 432000 },
+        { label: 'Private Donations', value: 127769 },
+        { label: 'Fiscal Sponsorships', value: 85656 },
+        { label: 'Cultural Events & Parade', value: 33118 },
+        { label: 'Vendor Rentals & Other', value: 69080 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 177963 },
+        { label: 'Inventory', value: 15210 },
+        { label: 'Buildings & Equipment (net)', value: 3282416 },
+        { label: 'Other Assets', value: 15407 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 3490996, total: true },
+      ],
+      liabilities: [
+        { label: 'Related-Party Loans', value: 1588227 },
+        { label: 'Unsecured Notes Payable', value: 535247 },
+        { label: 'Other Liabilities', value: 917636 },
+        { label: 'Total Liabilities', value: 3041110, total: true },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 449886 },
+        { label: 'Total Liabilities & Equity', value: 3490996, total: true },
+      ],
+      expenses: [
+        { label: 'Grants Paid', value: 73853 },
+        { label: 'Depreciation', value: 144425 },
+        { label: 'Programs — Community', value: 307709 },
+        { label: 'Programs — Beanlandia', value: 249820 },
+        { label: 'Programs — Literacy', value: 53853 },
+        { label: 'Programs — Parade', value: 49312 },
+        { label: 'Other', value: 102085 },
+        { type: 'spacer' },
+        { label: 'Total Expenses', value: 981057, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: 13284, total: true, net: true },
+      ],
+      incomeTotal: 994341,
+      expensesTotal: 981057,
+    },
+
+    // ── 2025 ──────────────────────────────────────────────────
+    {
+      year: 2025,
+      pdf: '/docs/990s/990-2025.pdf',
+      income: [
+        { label: 'Membership Dues', value: 207911 },
+        { label: 'Government Grants', value: 220000 },
+        { label: 'Private Donations', value: 365162 },
+        { label: 'Community Programming', value: 52330 },
+        { label: 'Asset Sale Gain', value: 196392 },
+      ],
+      assets: [
+        { label: 'Cash on Hand', value: 112978 },
+        { label: 'Prepaid Expenses', value: 7520 },
+        { label: 'Buildings & Equipment (net)', value: 3523254 },
+        { label: 'Other Assets', value: 17407 },
+        { type: 'spacer' },
+        { label: 'Total Assets', value: 3661159, total: true },
+      ],
+      liabilities: [
+        { label: 'Related-Party Loans', value: 1753554 },
+        { label: 'Unsecured Notes Payable', value: 519872 },
+        { label: 'Other Liabilities', value: 881631 },
+        { label: 'Total Liabilities', value: 3155057, total: true },
+        { type: 'spacer' },
+        { label: 'Net Assets (Equity)', value: 506102 },
+        { label: 'Total Liabilities & Equity', value: 3661159, total: true },
+      ],
+      expenses: [
+        { label: 'Grants Paid', value: 35168 },
+        { label: 'Salaries & Benefits', value: 102618 },
+        { label: 'Professional Services', value: 66853 },
+        { label: 'Mortgage / Interest', value: 263903 },
+        { label: 'Depreciation', value: 154907 },
+        { label: 'Insurance', value: 63978 },
+        { label: 'Programs', value: 134746 },
+        { label: 'Cost of Goods Sold', value: 53514 },
+        { label: 'Technology', value: 20416 },
+        { label: 'Other', value: 89476 },
+        { type: 'spacer' },
+        { label: 'Total Expenses', value: 985579, total: true },
+        { type: 'spacer' },
+        { label: 'Net Revenue', value: 56216, total: true, net: true },
+      ],
+      incomeTotal: 1041795,
+      expensesTotal: 985579,
+    },
+
+  ];
+
+  // ── RENDER ────────────────────────────────────────────────────
+  const tabs = document.getElementById('yearTabs');
+  const container = document.getElementById('reportContainer');
+
+  years.forEach((y, idx) => {
+    // Tab
+    const tab = document.createElement('button');
+    tab.className = 'year-tab' + (idx === years.length - 1 ? ' active' : '');
+    tab.textContent = y.year;
+    tab.dataset.year = y.year;
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.report-card').forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('report-' + y.year).classList.add('active');
+    });
+    tabs.appendChild(tab);
+
+    // Build income slices (filter out negatives for chart)
+    const chartSlices = y.income.filter(s => s.value > 0);
+
+    // Card
+    const net = y.incomeTotal - y.expensesTotal;
+    const netClass = net > 0 ? 'net-positive' : net < 0 ? 'net-negative' : 'net-neutral';
+    const netStr = net < 0 ? `(${fmt(net)})` : fmt(net);
+
+    const card = document.createElement('div');
+    card.className = 'report-card' + (idx === years.length - 1 ? ' active' : '');
+    card.id = 'report-' + y.year;
+
+    card.innerHTML = `
+      ${y.note ? `<div class="data-note">&#9432; ${y.note}</div>` : ''}
+      <div class="report-body">
+
+        <!-- LEFT PANEL -->
+        <div class="report-left">
+          <div class="report-org">Krewe of Red Beans</div>
+          <div class="report-year-label">${y.year}</div>
+          <div class="report-title-label">Financial Report</div>
+          <div class="chart-title">Funds Raised</div>
+          <div class="donut-wrap">${donutSVG(chartSlices)}</div>
+          <div class="legend">${legend(chartSlices)}</div>
+        </div>
+
+        <!-- RIGHT PANELS -->
+        <div class="report-right">
+
+          <!-- Assets -->
+          <div class="report-section">
+            <div class="rs-title">Assets</div>
+            <table class="ftable">${tableRows(y.assets)}</table>
+          </div>
+
+          <!-- Income -->
+          <div class="report-section">
+            <div class="rs-title">Income</div>
+            <table class="ftable">
+              ${tableRows(y.income)}
+              <tr class="spacer"><td colspan="2"></td></tr>
+              <tr class="total-row"><td>Total Income</td><td>${fmt(y.incomeTotal)}</td></tr>
+            </table>
+          </div>
+
+          <!-- Liabilities -->
+          <div class="report-section">
+            <div class="rs-title">Liabilities &amp; Net Assets</div>
+            <table class="ftable">${tableRows(y.liabilities)}</table>
+          </div>
+
+          <!-- Expenses -->
+          <div class="report-section">
+            <div class="rs-title">Expenses</div>
+            <table class="ftable">${tableRows(y.expenses)}</table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer bar -->
+      <div class="report-footer">
+        <span>Source: IRS Form 990 &mdash; <strong>Krewe of Red Beans</strong> (EIN 82-0667168) &mdash; Tax Year ${y.year}</span>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <a href="${y.pdf}" target="_blank" rel="noopener" style="color:rgba(255,255,255,0.7);font-size:0.72rem;text-decoration:none;">&#128196; View Full 990</a>
+          <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+  </script>
+</body>
+</html>

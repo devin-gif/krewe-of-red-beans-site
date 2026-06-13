@@ -240,10 +240,13 @@ img { display: block; max-width: 100%; }
   background: var(--white);
   color: var(--red);
   border-color: var(--white);
-  padding: 12px 26px;
+  padding: 16px 40px;
   white-space: nowrap;
+  /* bean / kidney shape */
+  border-radius: 50% 50% 50% 50% / 68% 68% 32% 32%;
+  transform: rotate(-4deg);
 }
-.btn-mt:hover { background: var(--gold); border-color: var(--gold); color: var(--charcoal); }
+.btn-mt:hover { background: var(--gold); border-color: var(--gold); color: var(--charcoal); transform: rotate(-4deg) scale(1.04); }
 
 @media (max-width: 900px) {
   .mt-inner { flex-wrap: wrap; gap: 16px 28px; }

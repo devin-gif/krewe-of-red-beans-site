@@ -166,6 +166,97 @@ img { display: block; max-width: 100%; }
   color: var(--charcoal);
 }
 
+/* ===== MEMBER TRACKER ===== */
+#member-tracker {
+  position: sticky;
+  top: 64px;            /* pin just below the fixed 64px nav */
+  z-index: 99;          /* sit under the nav (z-index 100), above content */
+  margin-top: 64px;     /* clear the fixed nav on initial load */
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+  color: var(--white);
+  border-bottom: 3px solid var(--gold);
+}
+
+.mt-inner {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.mt-copy { flex: 1 1 300px; min-width: 0; }
+
+.mt-eyebrow {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.mt-tagline {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.9);
+  line-height: 1.45;
+}
+
+.mt-progress-block { flex: 1 1 320px; }
+
+.mt-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
+
+.mt-count strong { font-size: 1.1rem; font-weight: 700; }
+.mt-remaining { color: rgba(255,255,255,0.75); font-weight: 500; }
+
+.mt-bar {
+  height: 12px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.mt-bar-fill {
+  height: 100%;
+  width: var(--target);
+  background: linear-gradient(90deg, var(--gold) 0%, #f0c14b 100%);
+  border-radius: 999px;
+  animation: mt-grow 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes mt-grow {
+  from { width: 0; }
+  to   { width: var(--target); }
+}
+
+.btn-mt {
+  flex: 0 0 auto;
+  background: var(--white);
+  color: var(--red);
+  border-color: var(--white);
+  padding: 12px 26px;
+  white-space: nowrap;
+}
+.btn-mt:hover { background: var(--gold); border-color: var(--gold); color: var(--charcoal); }
+
+@media (max-width: 900px) {
+  .mt-inner { flex-wrap: wrap; gap: 16px 28px; }
+  .mt-progress-block { flex: 1 1 100%; order: 3; }
+}
+
+@media (max-width: 640px) {
+  .mt-inner { flex-direction: column; align-items: stretch; gap: 14px; }
+  .mt-copy { flex: 0 0 auto; }
+  .mt-progress-block { flex: 0 0 auto; order: 0; }
+  .btn-mt { width: 100%; text-align: center; }
+}
+
 /* ===== HERO ===== */
 #hero {
   position: relative;

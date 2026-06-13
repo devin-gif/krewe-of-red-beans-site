@@ -191,7 +191,7 @@ img { display: block; max-width: 100%; }
   font-family: var(--font-serif);
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--gold);
+  color: var(--white);
   line-height: 1.2;
   margin-bottom: 4px;
 }

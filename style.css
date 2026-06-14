@@ -235,18 +235,41 @@ img { display: block; max-width: 100%; }
   to   { width: var(--target); }
 }
 
-.btn-mt {
+/* Kidney-bean shaped CTA */
+.btn-bean {
   flex: 0 0 auto;
-  background: var(--white);
-  color: var(--red);
-  border-color: var(--white);
-  padding: 16px 40px;
-  white-space: nowrap;
-  /* bean / kidney shape */
-  border-radius: 50% 50% 50% 50% / 68% 68% 32% 32%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 124px;
   transform: rotate(-4deg);
+  transition: transform 0.2s ease;
 }
-.btn-mt:hover { background: var(--gold); border-color: var(--gold); color: var(--charcoal); transform: rotate(-4deg) scale(1.04); }
+.btn-bean .bean-shape {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.btn-bean .bean-shape path {
+  fill: var(--white);
+  stroke: #000;
+  stroke-width: 5;
+  transition: fill 0.2s ease;
+}
+.btn-bean span {
+  position: relative;
+  z-index: 1;
+  color: var(--red);
+  font-weight: 700;
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+.btn-bean:hover { transform: rotate(-4deg) scale(1.05); }
+.btn-bean:hover .bean-shape path { fill: var(--gold); }
 
 @media (max-width: 900px) {
   .mt-inner { flex-wrap: wrap; gap: 16px 28px; }
@@ -257,7 +280,7 @@ img { display: block; max-width: 100%; }
   .mt-inner { flex-direction: column; align-items: stretch; gap: 14px; }
   .mt-copy { flex: 0 0 auto; }
   .mt-progress-block { flex: 0 0 auto; order: 0; }
-  .btn-mt { width: 100%; text-align: center; }
+  .btn-bean { align-self: center; }
 }
 
 /* ===== HERO ===== */

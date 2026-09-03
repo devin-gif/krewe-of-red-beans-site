@@ -157,6 +157,15 @@ img { display: block; max-width: 100%; }
 }
 .nav-links .nav-cta:hover { background: var(--red-dark); color: var(--white); }
 
+.nav-links .nav-donate {
+  background: var(--gold);
+  color: var(--charcoal);
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.nav-links .nav-donate:hover { background: #b88712; color: var(--charcoal); }
+
 .nav-toggle {
   display: none;
   background: none;

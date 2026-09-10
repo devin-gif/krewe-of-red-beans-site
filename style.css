@@ -137,7 +137,7 @@ img { display: block; max-width: 100%; }
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 20px;
 }
 
 .nav-links a {
@@ -2173,7 +2173,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* ===== NAV: collapse to the menu button before the links overflow ===== */
-@media (max-width: 1040px) {
+@media (max-width: 1180px) {
   .nav-links {
     display: none;
     flex-direction: column;
@@ -2189,4 +2189,109 @@ img { display: block; max-width: 100%; }
   }
   .nav-links.open { display: flex; }
   .nav-toggle { display: block; }
+}
+
+/* ===== LANGUAGE TOGGLE ===== */
+/* Sits outside .nav-links so it stays visible at every width —
+   on mobile it shows next to the hamburger instead of hiding inside it. */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: 20px;
+}
+
+.nav-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--red);
+  border: 1.5px solid var(--red);
+  border-radius: 999px;
+  padding: 5px 14px;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-lang:hover { background: var(--red); color: var(--white); }
+.nav-lang::before {
+  content: "\1F310";           /* globe */
+  font-size: 0.9em;
+  line-height: 1;
+}
+
+/* Push the link list right so the toggle can sit at the far end */
+.nav-links { margin-left: auto; }
+
+/* Hero entry point (homepage only) */
+.hero-lang {
+  margin-top: 24px;
+}
+.hero-lang a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  background: rgba(0,0,0,0.35);
+  border: 1.5px solid rgba(255,255,255,0.55);
+  border-radius: 999px;
+  padding: 10px 22px;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s, border-color 0.15s;
+}
+.hero-lang a:hover {
+  background: rgba(0,0,0,0.6);
+  border-color: var(--white);
+}
+
+@media (max-width: 480px) {
+  .nav-logo { font-size: 1rem; }
+  .nav-lang { font-size: 0.75rem; padding: 5px 11px; }
+  .nav-right { gap: 10px; margin-left: 12px; }
+  .hero-lang a { font-size: 0.92rem; padding: 9px 18px; }
+}
+
+/* Marks a link that leads to an English-only page or form */
+.lang-note {
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--gray);
+}
+/* Short badge form — kept on one line so "(en ingles)" never splits */
+.cause-tile-cta .lang-note,
+.footer-links .lang-note {
+  white-space: nowrap;
+  color: inherit;
+  opacity: 0.75;
+  font-size: 0.72rem;
+}
+
+/* Footer strip explaining what is and isn't translated */
+.lang-disclaimer {
+  background: var(--light-gray);
+  padding: 20px 24px;
+  text-align: center;
+}
+.lang-disclaimer p {
+  max-width: 720px;
+  margin: 0 auto;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--gray);
+}
+.lang-disclaimer a { color: var(--red); font-weight: 600; }
+
+/* ===== SPANISH DISPLAY FONT =====
+   The Legumo display face has 87 glyphs and none of the Spanish accented
+   characters (a e i o u with acute, n-tilde, inverted ? and !, guillemets).
+   Left alone, a heading like "Robotica" renders "Rob" in Legumo and the
+   accented o in a serif fallback — two different faces inside one word.
+   Spanish pages therefore use one consistent hand-drawn face with full
+   Latin coverage. To go back to Legumo everywhere, delete this rule. */
+html[lang="es"] {
+  --font-serif: 'Shantell Sans', 'Legumo', 'Playfair Display', Georgia, cursive;
 }

@@ -65,3 +65,42 @@ To update the count, edit three spots in `index.html` (search for `member-tracke
 3. The bar fill — `style="--target: 55.8%;"` (new count ÷ 2,000 × 100)
 
 Also update the matching count in the impact bar (`1,116+`).
+
+## The Spanish version (`/es/`)
+
+Five pages have a hand-written Spanish counterpart in the `es/` folder:
+
+| English | Spanish |
+| ------- | ------- |
+| `index.html` | `es/index.html` |
+| `events.html` | `es/events.html` |
+| `members.html` | `es/members.html` |
+| `donate-general.html` | `es/donate-general.html` |
+| `donate-beanlandia.html` | `es/donate-beanlandia.html` |
+
+The other pages (`transparency.html`, `financial-reports.html`, and the four
+individual `donate-*` cause pages) are English only. Links pointing to them
+from a Spanish page are marked with `<span class="lang-note">(en inglés)</span>`.
+
+### Rules to keep in mind when editing
+
+- **Edit both.** A change to any of the five English pages above needs the same
+  change in its Spanish counterpart, or the two drift apart.
+- **Spanish pages use root-absolute paths** (`/style.css`, `/images/…`,
+  `/es/events.html`). Don't switch them to relative paths — Netlify serves
+  `/es/events` without the `.html`, and relative paths break there.
+- **The language toggle** lives in the `.nav-right` block in every page's nav.
+  It must point at the *matching* page, not the homepage. Both directions are
+  wired up; if you add a new translated page, add the pill to both sides and
+  the `rel="alternate" hreflang` tags in both `<head>`s.
+- **Spanish headings use a different display font.** The Legumo face has no
+  accented characters, so `html[lang="es"]` overrides `--font-serif` to
+  Shantell Sans (see the bottom of `style.css`). Without it, a word like
+  "Robótica" renders in two different fonts.
+
+### What is still English
+
+The donation and registration forms are third-party embeds (GiveForms,
+Google Forms, Calendly) and are English regardless of the page they sit on.
+Each one is labelled on the Spanish pages, with an email address for anyone
+who needs help in Spanish.

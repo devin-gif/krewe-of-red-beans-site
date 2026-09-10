@@ -615,6 +615,8 @@ img { display: block; max-width: 100%; }
   margin-bottom: 16px;
 }
 
+.afterschool-text strong { color: var(--charcoal); }
+
 .afterschool-details {
   margin: 24px 0;
   display: flex;

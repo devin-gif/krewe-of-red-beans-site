@@ -117,7 +117,7 @@ img { display: block; max-width: 100%; }
 #nav.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,0.10); }
 
 .nav-inner {
-  max-width: var(--max-w);
+  max-width: 1240px;    /* a little wider than page content so the full link row fits */
   margin: 0 auto;
   padding: 0 24px;
   height: 64px;
@@ -132,18 +132,20 @@ img { display: block; max-width: 100%; }
   font-weight: 700;
   color: var(--red);
   white-space: nowrap;
+  margin-right: 28px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 18px;
 }
 
 .nav-links a {
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--charcoal);
+  white-space: nowrap;
   transition: color 0.15s;
 }
 .nav-links a:hover { color: var(--red); }
@@ -151,7 +153,7 @@ img { display: block; max-width: 100%; }
 .nav-links .nav-cta {
   background: var(--red);
   color: var(--white);
-  padding: 8px 20px;
+  padding: 8px 16px;
   border-radius: 4px;
   font-weight: 600;
 }
@@ -160,7 +162,7 @@ img { display: block; max-width: 100%; }
 .nav-links .nav-donate {
   background: var(--gold);
   color: var(--charcoal);
-  padding: 8px 20px;
+  padding: 8px 16px;
   border-radius: 4px;
   font-weight: 600;
 }
@@ -2188,8 +2190,9 @@ img { display: block; max-width: 100%; }
   .cause-tiles { grid-template-columns: 1fr; }
 }
 
-/* ===== NAV: collapse to the menu button before the links overflow ===== */
-@media (max-width: 1180px) {
+/* ===== NAV: collapse to the menu button before the links overflow =====
+   The longest link row needs ~1180px; this leaves room for a desktop scrollbar. */
+@media (max-width: 1219px) {
   .nav-links {
     display: none;
     flex-direction: column;

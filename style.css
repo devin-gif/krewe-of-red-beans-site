@@ -515,46 +515,119 @@ img { display: block; max-width: 100%; }
   line-height: 1.6;
 }
 
-/* ===== PROGRAMS ===== */
-#programs {
+/* ===== PARADE WITH US (homepage) ===== */
+.parade-home {
   padding: 100px 0;
   background: var(--white);
 }
 
-#programs h2 {
+.parade-home h2 {
   font-family: var(--font-serif);
   font-size: clamp(1.8rem, 3vw, 2.6rem);
   margin-bottom: 12px;
 }
 
-.programs-grid {
+.parade-photos {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 28px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 36px;
 }
 
-.program-card {
-  background: var(--cream);
+.parade-photos img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
   border-radius: var(--radius);
-  padding: 36px 32px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  border: 1px solid rgba(0,0,0,0.06);
 }
 
-.program-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
+.parade-credit {
+  font-size: 0.8rem;
+  color: var(--gray);
+  margin: 10px 0 48px;
 }
 
-.program-icon {
-  font-size: 2.2rem;
-  margin-bottom: 16px;
+.parade-join {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: start;
 }
 
-.program-card h3 {
+.parade-steps {
+  list-style: none;
+  counter-reset: step;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+}
+
+.parade-steps li {
+  counter-increment: step;
+  position: relative;
+  padding-left: 56px;
+}
+
+.parade-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
   font-family: var(--font-serif);
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.parade-steps h3 {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
   margin-bottom: 6px;
+}
+
+.parade-steps p {
+  color: var(--gray);
+  font-size: 0.97rem;
+  line-height: 1.7;
+}
+
+.parade-form {
+  background: var(--cream);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  padding: 12px;
+}
+
+.parade-form-note {
+  font-size: 0.85rem;
+  color: var(--gray);
+  margin: 0 4px 8px;
+}
+
+@media (max-width: 900px) {
+  .parade-join { grid-template-columns: 1fr; gap: 36px; }
+}
+
+@media (max-width: 640px) {
+  /* Swipeable photo strip on phones */
+  .parade-photos {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 72%;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 6px;
+  }
+  .parade-photos img { scroll-snap-align: start; }
 }
 
 .program-tag {
@@ -564,13 +637,6 @@ img { display: block; max-width: 100%; }
   text-transform: uppercase;
   color: var(--red);
   margin-bottom: 14px;
-}
-
-.program-card p {
-  color: var(--gray);
-  font-size: 0.97rem;
-  margin-bottom: 20px;
-  line-height: 1.7;
 }
 
 .card-link {
@@ -2251,7 +2317,6 @@ img { display: block; max-width: 100%; }
   .membership-inner,
   .lyc-inner { grid-template-columns: 1fr; gap: 40px; }
   .museum-image { order: -1; }
-  .programs-grid { grid-template-columns: 1fr; }
   .donate-cards { grid-template-columns: 1fr; }
   .donate-card-fund { flex-direction: column; align-items: flex-start; }
   .footer-inner { grid-template-columns: 1fr 1fr; }

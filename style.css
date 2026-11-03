@@ -276,7 +276,7 @@ img { display: block; max-width: 100%; }
   z-index: 1;
   color: var(--red);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   white-space: nowrap;
 }
 .btn-bean:hover { transform: rotate(-4deg) scale(1.05); }
